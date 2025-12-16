@@ -3,240 +3,324 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuizServer Admin</title>
-  <!-- ✅ Import QRCode library (keeping this from original code) -->
+  <title>QuizServer - Admin Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
     :root {
-      --primary: #4361ee;
-      --primary-dark: #3a56d4;
-      --secondary: #7209b7;
-      --success: #06d6a0;
-      --success-dark: #05c091;
-      --warning: #ffd166;
-      --warning-dark: #e6bc5c;
-      --text: #2b2d42;
-      --text-light: #8d99ae;
-      --light: #f8f9fa;
-      --dark: #212529;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #8b5cf6;
+      --accent: #ec4899;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-700: #374151;
+      --gray-900: #111827;
     }
-    
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 15s ease infinite;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      color: var(--text);
+      padding: 2rem;
       position: relative;
       overflow: hidden;
     }
-    
-    /* Animated background - MEDIUM DARK PURPLE */
-    .animated-bg {
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    body::before {
+      content: '';
       position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.3), transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(99, 102, 241, 0.2), transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(24px);
+      padding: 3rem;
+      border-radius: 32px;
+      box-shadow: 0 32px 88px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.5);
+      text-align: center;
+      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(255,255,255,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.15), transparent);
+      animation: floatSlow 8s ease-in-out infinite;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      bottom: -80px;
+      left: -80px;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.12), transparent);
+      animation: floatSlow 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(20px, 20px); }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .logo {
+      margin-bottom: 2rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .logo img {
+      max-width: 140px;
+      height: auto;
+      filter: drop-shadow(0 10px 20px rgba(99, 102, 241, 0.3));
+    }
+
+    h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+      position: relative;
+      z-index: 1;
+      animation: titleGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes titleGlow {
+      0% { filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.3)); }
+      100% { filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5)); }
+    }
+
+    .subtitle {
+      color: var(--gray-700);
+      font-size: 1.1rem;
+      margin-bottom: 3rem;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .btn {
+      position: relative;
+      padding: 1.35rem 2.25rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.875rem;
+      overflow: hidden;
+      font-family: inherit;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(255,255,255,0.2);
+      z-index: 1;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
+      background: linear-gradient(135deg, transparent, rgba(255,255,255,0.25), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
       z-index: -1;
-      background: linear-gradient(135deg, #6247aa 0%, #3f2b63 100%);
-      animation: gradientBG 15s ease infinite;
     }
-    
-    /* Animated bubbles/particles - MEDIUM DARK PURPLE */
-    .bubble {
+
+    .btn:hover::before {
+      transform: translateX(100%);
+    }
+
+    .btn::after {
+      content: '';
       position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
       border-radius: 50%;
-      background: rgba(145, 123, 197, 0.3);
-      animation: float 8s infinite ease-in-out;
+      background: rgba(255,255,255,0.15);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
       z-index: -1;
     }
-    
-    @keyframes gradientBG {
-      0% {
-        background: linear-gradient(135deg, #6247aa 0%, #3f2b63 100%);
-      }
-      25% {
-        background: linear-gradient(135deg, #7045a2 0%, #52378f 100%);
-      }
-      50% {
-        background: linear-gradient(135deg, #5a3e96 0%, #4a2f7a 100%);
-      }
-      75% {
-        background: linear-gradient(135deg, #664eaf 0%, #392667 100%);
-      }
-      100% {
-        background: linear-gradient(135deg, #6247aa 0%, #3f2b63 100%);
-      }
+
+    .btn:hover::after {
+      width: 400px;
+      height: 400px;
     }
-    
-    @keyframes float {
-      0% {
-        transform: translateY(0) translateX(0);
-        opacity: 0.7;
-      }
-      50% {
-        transform: translateY(-20px) translateX(10px);
-        opacity: 0.3;
-      }
-      100% {
-        transform: translateY(0) translateX(0);
-        opacity: 0.7;
-      }
+
+    .btn:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 18px 48px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.3);
     }
-    
-    .container {
-      max-width: 500px;
-      width: 90%;
-      margin: 2rem auto;
+
+    .btn:active {
+      transform: translateY(-2px) scale(1);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+    }
+
+    .btn i {
+      font-size: 1.3rem;
+      transition: transform 0.3s;
+    }
+
+    .btn:hover i {
+      transform: scale(1.1);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success), #34d399);
+      color: white;
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, var(--warning), #fbbf24);
+      color: white;
+    }
+
+    .btn span {
       position: relative;
       z-index: 1;
     }
-    
-    .card {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(5px);
-      padding: 2.5rem;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-    }
-    
-    .header {
-      margin-bottom: 2.5rem;
-    }
-    
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-weight: 700;
-    }
-    
-    .subtitle {
-      color: var(--text-light);
-      font-size: 1.1rem;
-      margin-bottom: 1.5rem;
-    }
-    
-    .btn {
-      display: block;
-      width: 100%;
-      padding: 1rem;
-      margin: 1rem 0;
-      font-size: 1.1rem;
-      font-weight: 600;
-      border: none;
+
+    .feature-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      color: white;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.6rem;
       border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-    
-    .btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
-    }
-    
-    .btn-success {
-      background: var(--success);
-      color: white;
-    }
-    
-    .btn-success:hover {
-      background: var(--success-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(6, 214, 160, 0.3);
-    }
-    
-    .btn-warning {
-      background: var(--warning);
-      color: var(--dark);
-    }
-    
-    .btn-warning:hover {
-      background: var(--warning-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(255, 209, 102, 0.3);
-    }
-    
-    .btn i {
-      margin-right: 0.75rem;
-      font-size: 1.2rem;
-    }
-    
-    .logo {
-      margin-bottom: 1rem;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
       animation: pulse 2s infinite;
     }
-    
-    /* Custom logo image styles */
-    .logo img {
-      max-width: 120px;
-      height: auto;
-    }
-    
+
     @keyframes pulse {
-      0% {
+      0%, 100% {
         transform: scale(1);
       }
       50% {
         transform: scale(1.05);
       }
-      100% {
-        transform: scale(1);
+    }
+
+    @media (max-width: 640px) {
+      .card {
+        padding: 2rem 1.5rem;
+      }
+
+      h1 {
+        font-size: 2.25rem;
+      }
+
+      .subtitle {
+        font-size: 1rem;
       }
     }
-    
-    /* Hidden elements from original to maintain functionality */
-    #instructions, #participants-list, .control-panel, #quiz-select, #start-quiz {
+
+    /* Hidden elements for Electron functionality */
+    .control-panel, #instructions, #participants-list, #quiz-select, #start-quiz {
       display: none;
     }
   </style>
-  <!-- Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-  <!-- Animated background -->
-  <div class="animated-bg"></div>
-  
-  <!-- Hidden elements from original to maintain functionality -->
+  <!-- Hidden Electron elements -->
   <div class="control-panel">
     <label for="ip-select">Select IP to share:</label>
     <select id="ip-select"></select>
     <button id="start-server">Start Server</button>
   </div>
 
-  <div id="instructions" style="display:none;">
+  <div id="instructions">
     <h2>Students: Connect Here</h2>
     <p id="info-text"></p>
     <canvas id="qrcode"></canvas>
@@ -245,66 +329,44 @@
   <select id="quiz-select"></select>
   <button id="start-quiz">Start Quiz</button>
   <ul id="participants-list"></ul>
-  <!-- End of hidden elements -->
 
+  <!-- Main UI -->
   <div class="container">
     <div class="card">
-      <div class="header">
-        <div class="logo">
-          <!-- Replace the Font Awesome icon with your own logo image -->
-          <img src="/mnt/hdd/QuizServer/public/images/logo.png" alt="QuizServer Logo">
-        </div>
-        <h1>QuizServer Admin</h1>
-        <p class="subtitle">Create, manage, and analyze interactive quizzes for your students</p>
+      <div class="logo">
+        <img src="/images/logo.png" alt="QuizServer Logo" onerror="this.style.display='none'">
       </div>
-      
-      <button class="btn btn-primary" onclick="location.href='create_quiz.html'">
-        <i class="fas fa-plus-circle"></i> Create New Quiz
-      </button>
-      
-      <button class="btn btn-success" onclick="location.href='admin.html'">
-        <i class="fas fa-broadcast-tower"></i> Start Server & Monitor
-      </button>
-      
-      <button class="btn btn-warning" onclick="location.href='results.html'">
-        <i class="fas fa-chart-pie"></i> View Quiz Results
-      </button>
+
+      <h1>QuizServer Admin</h1>
+      <p class="subtitle">Create, manage, and analyze interactive quizzes for your students</p>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="location.href='http://localhost:3000/create_quiz.html'">
+          <i class="fas fa-plus-circle"></i>
+          <span>Create New Quiz</span>
+        </button>
+
+        <button class="btn btn-primary" onclick="location.href='http://localhost:3000/quiz_library.html'" style="background: linear-gradient(135deg, var(--info), #60a5fa);">
+          <i class="fas fa-book"></i>
+          <span>Quiz Library</span>
+        </button>
+
+        <button class="btn btn-success" onclick="location.href='http://localhost:3000/admin.html'">
+          <i class="fas fa-broadcast-tower"></i>
+          <span>Start Server & Monitor</span>
+          <span class="feature-badge">LIVE</span>
+        </button>
+
+        <button class="btn btn-warning" onclick="location.href='http://localhost:3000/quiz_results.html'">
+          <i class="fas fa-chart-pie"></i>
+          <span>View Quiz Results</span>
+        </button>
+      </div>
     </div>
   </div>
 
   <script>
-    // Create animated background bubbles
-    function createBubbles() {
-      const bubbleCount = 15;
-      const container = document.body;
-      
-      for (let i = 0; i < bubbleCount; i++) {
-        const bubble = document.createElement('div');
-        bubble.classList.add('bubble');
-        
-        // Random properties
-        const size = Math.random() * 100 + 50;
-        const left = Math.random() * 100;
-        const animationDuration = (Math.random() * 10 + 8) + 's';
-        const animationDelay = (Math.random() * 5) + 's';
-        
-        // Apply styles
-        bubble.style.width = `${size}px`;
-        bubble.style.height = `${size}px`;
-        bubble.style.left = `${left}%`;
-        bubble.style.top = `${Math.random() * 100}%`;
-        bubble.style.animationDuration = animationDuration;
-        bubble.style.animationDelay = animationDelay;
-        
-        // Add to DOM
-        container.appendChild(bubble);
-      }
-    }
-    
-    // Call the function when the page loads
-    window.addEventListener('load', createBubbles);
-
-    // Keeping the Electron functionality from the original code
+    // Electron functionality (keeping from original)
     const startBtn = document.getElementById('start-server');
     const infoText = document.getElementById('info-text');
     const instructions = document.getElementById('instructions');
@@ -315,10 +377,8 @@
 
     let baseURL = '';
 
-    // Ask Electron main process for IPs
     window.electronAPI.getIPs();
 
-    // Populate dropdown when IPs arrive
     window.electronAPI.onAvailableIPs((ips) => {
       ips.forEach(({ name, address }) => {
         const option = document.createElement('option');
@@ -328,17 +388,18 @@
       });
     });
 
-    startBtn.onclick = () => {
-      const selectedIP = ipSelect.value;
-      window.electronAPI.startServer(selectedIP);
-    };
+    if (startBtn) {
+      startBtn.onclick = () => {
+        const selectedIP = ipSelect.value;
+        window.electronAPI.startServer(selectedIP);
+      };
+    }
 
     window.electronAPI.onServerStarted(({ ip, port }) => {
       baseURL = `http://${ip}:${port}`;
       infoText.innerText = `Students: Connect to Wi-Fi, open ${baseURL}`;
       instructions.style.display = 'block';
 
-      // Generate QR code here
       QRCode.toCanvas(document.getElementById('qrcode'), baseURL, function (error) {
         if (error) console.error(error);
         else console.log("✅ QR generated!");
@@ -346,7 +407,7 @@
     });
 
     function fetchParticipants() {
-      if (!baseURL) return; // Server not started yet
+      if (!baseURL) return;
       fetch(`${baseURL}/api/participants`)
         .then(res => res.json())
         .then(data => {
@@ -371,10 +432,12 @@
       });
     });
 
-    startQuizBtn.onclick = () => {
-      const selected = quizSelect.value;
-      window.electronAPI.startQuiz(selected);
-    };
+    if (startQuizBtn) {
+      startQuizBtn.onclick = () => {
+        const selected = quizSelect.value;
+        window.electronAPI.startQuiz(selected);
+      };
+    }
 
     window.electronAPI.onQuizStarted((quiz) => {
       alert(`✅ Quiz "${quiz.name}" started!`);

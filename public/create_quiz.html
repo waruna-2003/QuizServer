@@ -3,92 +3,620 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Quiz</title>
+  <title>Create Quiz - QuizServer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #8b5cf6;
+      --success: #10b981;
+      --success-dark: #059669;
+      --danger: #ef4444;
+      --danger-dark: #dc2626;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-900: #111827;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f9fafb;
-      padding: 20px;
-    }
-    .container {
-      max-width: 700px;
-      margin: 0 auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 15s ease infinite;
+      min-height: 100vh;
+      padding: 2rem 1rem;
       position: relative;
+      overflow-x: hidden;
     }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.3), transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(99, 102, 241, 0.2), transparent 50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(24px);
+      padding: 3rem;
+      border-radius: 28px;
+      box-shadow: 0 24px 72px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.5);
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.6s ease;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid var(--gray-100);
+    }
+
+    .back-btn {
+      background: var(--gray-100);
+      color: var(--gray-700);
+      border: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .back-btn:hover {
+      background: var(--gray-200);
+      transform: translateX(-4px);
+    }
+
     h1 {
+      flex: 1;
       text-align: center;
-      margin-bottom: 1.5rem;
+      color: var(--gray-900);
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
+
+    .quiz-name-section {
+      margin-bottom: 2rem;
+      background: var(--gray-50);
+      padding: 1.5rem;
+      border-radius: 16px;
+      border: 2px dashed var(--gray-300);
+      transition: all 0.3s;
+    }
+
+    .quiz-name-section:focus-within {
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
     label {
       display: block;
-      margin-top: 1rem;
-      font-weight: bold;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    input, textarea, select {
+
+    label i {
+      color: var(--primary);
+    }
+
+    input, select, textarea {
       width: 100%;
-      padding: 0.6rem;
-      margin-top: 0.4rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      padding: 0.875rem 1rem;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
       font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.3s;
+      background: white;
     }
-    button {
-      margin-top: 1rem;
-      padding: 0.7rem 1.2rem;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    input[type="file"] {
+      padding: 0.5rem;
       cursor: pointer;
     }
-    .add-btn {
-      background: #007bff;
-      color: white;
+
+    .ma-checkboxes {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
     }
-    .add-btn:hover { background: #0056b3; }
-    .save-btn {
-      background: #28a745;
-      color: white;
-    }
-    .save-btn:hover { background: #1e7e34; }
-    .question {
-      border: 1px solid #ddd;
-      padding: 1rem;
+
+    .ma-checkboxes label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
       border-radius: 8px;
-      margin-top: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
     }
-    .back-btn {
-      background: #6c757d;
+
+    .ma-checkboxes label:hover {
+      background: var(--gray-100);
+    }
+
+    .ma-checkboxes input[type="checkbox"] {
+      width: auto;
+      cursor: pointer;
+    }
+
+    input::placeholder {
+      color: var(--gray-300);
+    }
+
+    #questions-container {
+      margin: 2rem 0;
+    }
+
+    .question {
+      background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.9), rgba(249, 250, 251, 0.9));
+      backdrop-filter: blur(10px);
+      border: 2px solid var(--gray-200);
+      padding: 2rem;
+      border-radius: 24px;
+      margin-bottom: 1.5rem;
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: questionAppear 0.5s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    @keyframes questionAppear {
+      from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .question:hover {
+      border-color: var(--primary);
+      box-shadow: 0 12px 32px rgba(99, 102, 241, 0.2);
+      transform: translateY(-4px);
+    }
+
+    .question-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--gray-100);
+    }
+
+    .question-number {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: white;
-      position: absolute;
-      top: 1rem;
-      left: 1rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    .back-btn:hover {
-      background: #5a6268;
+
+    .delete-btn {
+      background: var(--danger);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
+
+    .delete-btn:hover {
+      background: var(--danger-dark);
+      transform: scale(1.05);
+    }
+
+    .question input {
+      margin-bottom: 1rem;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    @media (max-width: 640px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-input {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--gray-600);
+    }
+
+    .option-badge {
+      background: var(--primary);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
     .buttons-container {
       display: flex;
-      justify-content: space-between;
-      margin-top: 1.5rem;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--gray-100);
+    }
+
+    @media (max-width: 640px) {
+      .buttons-container {
+        flex-direction: column;
+      }
+    }
+
+    button {
+      flex: 1;
+      padding: 1.15rem 2.25rem;
+      border: none;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, transparent, rgba(255,255,255,0.25), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
+    }
+
+    button:hover::before {
+      transform: translateX(100%);
+    }
+
+    button::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    button:active::after {
+      width: 300px;
+      height: 300px;
+    }
+
+    .add-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+    }
+
+    .add-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(99, 102, 241, 0.45);
+    }
+
+    .add-btn:active {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+    }
+
+    .save-btn {
+      background: linear-gradient(135deg, var(--success), #34d399);
+      color: white;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+    }
+
+    .save-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(16, 185, 129, 0.45);
+    }
+
+    .save-btn:active {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: var(--gray-50);
+      border-radius: 16px;
+      border: 2px dashed var(--gray-300);
+      margin: 2rem 0;
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      color: var(--gray-300);
+      margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+      color: var(--gray-600);
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+      color: var(--gray-400);
+      font-size: 0.95rem;
+    }
+
+    .notification {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: white;
+      padding: 1.25rem 1.5rem;
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+      max-width: 400px;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .notification.success {
+      border-left: 4px solid var(--success);
+    }
+
+    .notification.error {
+      border-left: 4px solid var(--danger);
+    }
+
+    .notification i {
+      font-size: 1.5rem;
+    }
+
+    .notification.success i {
+      color: var(--success);
+    }
+
+    .notification.error i {
+      color: var(--danger);
+    }
+
+    .notification-content h4 {
+      color: var(--gray-900);
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .notification-content p {
+      color: var(--gray-600);
+      font-size: 0.85rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <button class="back-btn" id="back-button">← Back</button>
-    <h1>Create Quiz</h1>
-    <label for="quiz-name">Quiz Name:</label>
-    <input type="text" id="quiz-name" placeholder="Enter quiz title" />
+    <div class="header">
+      <button class="back-btn" id="back-button">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+      <h1><i class="fas fa-plus-circle"></i> Create Quiz</h1>
+      <div style="width: 110px;"></div> <!-- Spacer for centering -->
+    </div>
 
-    <div id="questions-container"></div>
+    <div class="quiz-name-section">
+      <label for="quiz-name">
+        <i class="fas fa-heading"></i>
+        Quiz Title
+      </label>
+      <input type="text" id="quiz-name" placeholder="e.g., Mathematics Quiz Chapter 5" />
+
+      <label for="quiz-time-limit" style="margin-top: 1.5rem;">
+        <i class="fas fa-clock"></i>
+        Overall Quiz Time Limit (Optional)
+      </label>
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <input type="number" id="quiz-time-limit" placeholder="0" min="0" style="flex: 1;" />
+        <select id="quiz-time-unit" style="flex: 0.5;">
+          <option value="seconds">Seconds</option>
+          <option value="minutes" selected>Minutes</option>
+          <option value="hours">Hours</option>
+        </select>
+      </div>
+      <p style="color: var(--gray-600); font-size: 0.85rem; margin-top: 0.5rem;">
+        <i class="fas fa-info-circle"></i> Leave at 0 for no time limit. Quiz will auto-submit when time expires.
+      </p>
+
+      <!-- Randomization Settings -->
+      <div style="margin-top: 1.5rem; padding: 1.5rem; background: #fef3c7; border-radius: 12px; border: 2px solid #fbbf24;">
+        <label style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fas fa-random"></i>
+          <strong>Randomization Settings (Anti-Cheating)</strong>
+        </label>
+
+        <div style="display: grid; gap: 1rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-bottom: 0;">
+            <input type="checkbox" id="shuffle-questions" style="width: auto; cursor: pointer;">
+            <span style="flex: 1;">
+              <strong>Shuffle Questions</strong>
+              <br>
+              <small style="color: var(--gray-600);">Each student gets questions in random order</small>
+            </span>
+          </label>
+
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-bottom: 0;">
+            <input type="checkbox" id="shuffle-options" style="width: auto; cursor: pointer;">
+            <span style="flex: 1;">
+              <strong>Shuffle Answer Options</strong>
+              <br>
+              <small style="color: var(--gray-600);">Randomize A, B, C, D positions (multiple choice only)</small>
+            </span>
+          </label>
+
+          <div>
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-bottom: 0.5rem;">
+              <input type="checkbox" id="use-question-pool" style="width: auto; cursor: pointer;" onchange="toggleQuestionPool()">
+              <span style="flex: 1;">
+                <strong>Use Question Pool</strong>
+                <br>
+                <small style="color: var(--gray-600);">Randomly select subset of questions for each student</small>
+              </span>
+            </label>
+
+            <div id="question-pool-settings" style="display: none; margin-top: 0.5rem; padding: 1rem; background: white; border-radius: 8px;">
+              <label style="font-size: 0.9rem; margin-bottom: 0.5rem;">
+                Number of questions to show per student:
+              </label>
+              <input type="number" id="pool-size" min="1" placeholder="e.g., 10" style="width: 100px;">
+              <p style="color: var(--gray-600); font-size: 0.8rem; margin-top: 0.25rem;">
+                <i class="fas fa-info-circle"></i> Must be less than total questions added
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="questions-container">
+      <div class="empty-state" id="empty-state">
+        <i class="fas fa-clipboard-question"></i>
+        <h3>No Questions Yet</h3>
+        <p>Click "Add Question" to create your first question</p>
+      </div>
+    </div>
 
     <div class="buttons-container">
-      <button class="add-btn" id="add-question">+ Add Question</button>
-      <button class="save-btn" id="save-quiz">Save Quiz</button>
+      <button class="add-btn" id="add-question">
+        <i class="fas fa-plus"></i> Add Question
+      </button>
+      <button class="save-btn" id="save-quiz">
+        <i class="fas fa-save"></i> Save Quiz
+      </button>
     </div>
   </div>
 
@@ -97,71 +625,886 @@
     const addQuestionBtn = document.getElementById('add-question');
     const saveQuizBtn = document.getElementById('save-quiz');
     const backButton = document.getElementById('back-button');
+    const emptyState = document.getElementById('empty-state');
 
     let questionCount = 0;
+    let editMode = false;
+    let editQuizId = null;
 
-    // Add back button functionality
+    // Check if we're editing an existing quiz
+    window.addEventListener('DOMContentLoaded', async () => {
+      const storedQuizId = localStorage.getItem('editQuizId');
+      if (storedQuizId) {
+        editMode = true;
+        editQuizId = storedQuizId;
+        localStorage.removeItem('editQuizId');
+        await loadQuizForEditing(editQuizId);
+      }
+    });
+
+    // Back button
     backButton.onclick = () => {
-      window.location.href = 'admin_welcome.html';
+      if (editMode) {
+        window.location.href = 'quiz_library.html';
+      } else {
+        window.location.href = 'admin_welcome.html';
+      }
     };
 
-    // Add new question block
+    // Toggle question pool settings
+    window.toggleQuestionPool = () => {
+      const checkbox = document.getElementById('use-question-pool');
+      const settings = document.getElementById('question-pool-settings');
+      settings.style.display = checkbox.checked ? 'block' : 'none';
+    };
+
+    // Add new question
     addQuestionBtn.onclick = () => {
       questionCount++;
+
+      // Hide empty state
+      if (emptyState) {
+        emptyState.style.display = 'none';
+      }
+
       const qDiv = document.createElement('div');
       qDiv.className = 'question';
+      qDiv.dataset.questionId = questionCount;
       qDiv.innerHTML = `
-        <label>Question ${questionCount}</label>
-        <input type="text" class="q-text" placeholder="Enter question text" />
+        <div class="question-header">
+          <span class="question-number">
+            <i class="fas fa-question-circle"></i>
+            Question ${questionCount}
+          </span>
+          <button class="delete-btn" onclick="deleteQuestion(${questionCount})">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
 
-        <label>Option A</label>
-        <input type="text" class="opt" />
+        <label>
+          <i class="fas fa-list"></i>
+          Question Type
+        </label>
+        <select class="q-type" onchange="updateQuestionFields(${questionCount})">
+          <option value="multiple-choice">Multiple Choice</option>
+          <option value="true-false">True/False</option>
+          <option value="multiple-answer">Multiple Correct Answers</option>
+          <option value="fill-blank">Fill in the Blank</option>
+          <option value="matching">Matching</option>
+          <option value="short-answer">Short Answer/Essay</option>
+        </select>
 
-        <label>Option B</label>
-        <input type="text" class="opt" />
+        <label style="margin-top: 1rem;">
+          <i class="fas fa-comment-dots"></i>
+          Question Text
+        </label>
+        <input type="text" class="q-text" placeholder="Enter your question here..." />
 
-        <label>Option C</label>
-        <input type="text" class="opt" />
+        <label style="margin-top: 1rem;">
+          <i class="fas fa-stopwatch"></i>
+          Question Time Limit (Optional)
+        </label>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <input type="number" class="q-time-limit" placeholder="0" min="0" style="flex: 1;" />
+          <span style="color: var(--gray-600); font-size: 0.9rem;">seconds</span>
+        </div>
+        <p style="color: var(--gray-600); font-size: 0.85rem; margin-top: 0.25rem;">
+          <i class="fas fa-info-circle"></i> Leave at 0 for no limit. Auto-advances to next question when time expires.
+        </p>
 
-        <label>Option D</label>
-        <input type="text" class="opt" />
+        <label style="margin-top: 1rem;">
+          <i class="fas fa-image"></i>
+          Question Image (Optional)
+        </label>
+        <input type="file" class="q-image" accept="image/*" onchange="handleImageUpload(this, ${questionCount})" />
+        <div class="image-preview" style="display:none; margin-top: 0.5rem;">
+          <img style="max-width: 200px; border-radius: 8px;" />
+        </div>
 
-        <label>Correct Answer</label>
+        <div class="question-inputs-container">
+          <div class="options-grid mc-options">
+            <div class="option-input">
+              <div class="option-label">
+                <span class="option-badge">A</span>
+                Option A
+              </div>
+              <input type="text" class="opt" data-option="A" placeholder="Enter option A" />
+            </div>
+
+            <div class="option-input">
+              <div class="option-label">
+                <span class="option-badge">B</span>
+                Option B
+              </div>
+              <input type="text" class="opt" data-option="B" placeholder="Enter option B" />
+            </div>
+
+            <div class="option-input">
+              <div class="option-label">
+                <span class="option-badge">C</span>
+                Option C
+              </div>
+              <input type="text" class="opt" data-option="C" placeholder="Enter option C" />
+            </div>
+
+            <div class="option-input">
+              <div class="option-label">
+                <span class="option-badge">D</span>
+                Option D
+              </div>
+              <input type="text" class="opt" data-option="D" placeholder="Enter option D" />
+            </div>
+          </div>
+
+          <div class="tf-options" style="display:none;">
+            <!-- True/False radio buttons -->
+          </div>
+
+          <div class="ma-options" style="display:none;">
+            <!-- Multiple answer checkboxes -->
+          </div>
+
+          <div class="fb-options" style="display:none;">
+            <label>
+              <i class="fas fa-pen"></i>
+              Correct Answer(s) (separate multiple answers with |)
+            </label>
+            <input type="text" class="fb-answer" placeholder="e.g., Paris | paris" />
+          </div>
+
+          <div class="matching-options" style="display:none;">
+            <label>Items (one per line)</label>
+            <textarea class="match-items" rows="4" placeholder="Item 1&#10;Item 2&#10;Item 3"></textarea>
+            <label style="margin-top: 1rem;">Matches (one per line, same order as items)</label>
+            <textarea class="match-answers" rows="4" placeholder="Match 1&#10;Match 2&#10;Match 3"></textarea>
+          </div>
+
+          <div class="sa-options" style="display:none;">
+            <p style="color: var(--gray-600); font-style: italic; font-size: 0.9rem;">
+              <i class="fas fa-info-circle"></i> This question requires manual grading
+            </p>
+          </div>
+        </div>
+
+        <label style="margin-top: 1rem;" class="correct-answer-label">
+          <i class="fas fa-check-circle"></i>
+          Correct Answer
+        </label>
         <select class="correct">
           <option value="A">Option A</option>
           <option value="B">Option B</option>
           <option value="C">Option C</option>
           <option value="D">Option D</option>
         </select>
+
+        <div class="ma-correct" style="display:none;">
+          <label style="margin-top: 1rem;">
+            <i class="fas fa-check-double"></i>
+            Select All Correct Answers
+          </label>
+          <div class="ma-checkboxes">
+            <label><input type="checkbox" value="A"> Option A</label>
+            <label><input type="checkbox" value="B"> Option B</label>
+            <label><input type="checkbox" value="C"> Option C</label>
+            <label><input type="checkbox" value="D"> Option D</label>
+          </div>
+        </div>
+
+        <label style="margin-top: 1rem;">
+          <i class="fas fa-lightbulb"></i>
+          Explanation (Optional - shown after submission)
+        </label>
+        <textarea class="q-explanation" rows="2" placeholder="Explain why this answer is correct..."></textarea>
       `;
       questionsContainer.appendChild(qDiv);
     };
 
-    // Save quiz as JSON
+    // Update question fields based on type
+    window.updateQuestionFields = (questionId) => {
+      const question = document.querySelector(`[data-question-id="${questionId}"]`);
+      const qType = question.querySelector('.q-type').value;
+
+      // Hide all option containers
+      question.querySelector('.mc-options').style.display = 'none';
+      question.querySelector('.tf-options').style.display = 'none';
+      question.querySelector('.ma-options').style.display = 'none';
+      question.querySelector('.fb-options').style.display = 'none';
+      question.querySelector('.matching-options').style.display = 'none';
+      question.querySelector('.sa-options').style.display = 'none';
+
+      // Hide/show correct answer selectors
+      const correctLabel = question.querySelector('.correct-answer-label');
+      const correctSelect = question.querySelector('.correct');
+      const maCorrect = question.querySelector('.ma-correct');
+
+      correctLabel.style.display = 'block';
+      correctSelect.style.display = 'block';
+      maCorrect.style.display = 'none';
+
+      // Show appropriate inputs
+      switch(qType) {
+        case 'multiple-choice':
+          question.querySelector('.mc-options').style.display = 'grid';
+          break;
+
+        case 'true-false':
+          question.querySelector('.tf-options').style.display = 'block';
+          correctSelect.innerHTML = '<option value="True">True</option><option value="False">False</option>';
+          break;
+
+        case 'multiple-answer':
+          question.querySelector('.ma-options').style.display = 'grid';
+          correctLabel.style.display = 'none';
+          correctSelect.style.display = 'none';
+          maCorrect.style.display = 'block';
+          // Populate MA options
+          const maContainer = question.querySelector('.ma-options');
+          if (!maContainer.querySelector('.opt')) {
+            maContainer.innerHTML = `
+              <div class="option-input">
+                <div class="option-label"><span class="option-badge">A</span> Option A</div>
+                <input type="text" class="opt" data-option="A" placeholder="Enter option A" />
+              </div>
+              <div class="option-input">
+                <div class="option-label"><span class="option-badge">B</span> Option B</div>
+                <input type="text" class="opt" data-option="B" placeholder="Enter option B" />
+              </div>
+              <div class="option-input">
+                <div class="option-label"><span class="option-badge">C</span> Option C</div>
+                <input type="text" class="opt" data-option="C" placeholder="Enter option C" />
+              </div>
+              <div class="option-input">
+                <div class="option-label"><span class="option-badge">D</span> Option D</div>
+                <input type="text" class="opt" data-option="D" placeholder="Enter option D" />
+              </div>
+            `;
+            maContainer.classList.add('options-grid');
+          }
+          break;
+
+        case 'fill-blank':
+          question.querySelector('.fb-options').style.display = 'block';
+          correctLabel.style.display = 'none';
+          correctSelect.style.display = 'none';
+          break;
+
+        case 'matching':
+          question.querySelector('.matching-options').style.display = 'block';
+          correctLabel.style.display = 'none';
+          correctSelect.style.display = 'none';
+          break;
+
+        case 'short-answer':
+          question.querySelector('.sa-options').style.display = 'block';
+          correctLabel.style.display = 'none';
+          correctSelect.style.display = 'none';
+          break;
+      }
+    };
+
+    // Handle image upload
+    window.handleImageUpload = (input, questionId) => {
+      const file = input.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const question = document.querySelector(`[data-question-id="${questionId}"]`);
+        const preview = question.querySelector('.image-preview');
+        const img = preview.querySelector('img');
+
+        img.src = e.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    };
+
+    // Delete question
+    window.deleteQuestion = (id) => {
+      const question = document.querySelector(`[data-question-id="${id}"]`);
+      if (question) {
+        question.style.animation = 'questionDisappear 0.3s ease';
+        setTimeout(() => {
+          question.remove();
+
+          // Show empty state if no questions
+          const remainingQuestions = document.querySelectorAll('.question');
+          if (remainingQuestions.length === 0 && emptyState) {
+            emptyState.style.display = 'block';
+          }
+
+          // Renumber questions
+          document.querySelectorAll('.question').forEach((q, index) => {
+            q.querySelector('.question-number').innerHTML = `
+              <i class="fas fa-question-circle"></i>
+              Question ${index + 1}
+            `;
+          });
+        }, 300);
+      }
+    };
+
+    // Show notification
+    function showNotification(message, type, title) {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        <div class="notification-content">
+          <h4>${title}</h4>
+          <p>${message}</p>
+        </div>
+      `;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.animation = 'slideIn 0.3s ease reverse';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    // Save quiz
     saveQuizBtn.onclick = () => {
-        const quizData = {
-            name: document.getElementById('quiz-name').value.trim(),
-            questions: [...document.querySelectorAll('.question')].map((qBlock, index) => {
-                const qText = qBlock.querySelector('.q-text').value.trim();
-                const opts = Array.from(qBlock.querySelectorAll('.opt')).map(opt => opt.value.trim());
-                const correct = qBlock.querySelector('.correct').value;
+      const quizName = document.getElementById('quiz-name').value.trim();
 
-                return {
-                    question: qText,
-                    options: { A: opts[0], B: opts[1], C: opts[2], D: opts[3] },
-                    correct
-                };
-                })
-            };
+      // Get quiz time limit
+      const timeLimitValue = parseFloat(document.getElementById('quiz-time-limit').value) || 0;
+      const timeUnit = document.getElementById('quiz-time-unit').value;
 
-            if (!quizData.name || quizData.questions.length === 0) {
-                alert("Please enter quiz name and add at least one question.");
+      // Convert to seconds
+      let quizTimeLimitSeconds = 0;
+      if (timeLimitValue > 0) {
+        switch(timeUnit) {
+          case 'seconds':
+            quizTimeLimitSeconds = timeLimitValue;
+            break;
+          case 'minutes':
+            quizTimeLimitSeconds = timeLimitValue * 60;
+            break;
+          case 'hours':
+            quizTimeLimitSeconds = timeLimitValue * 3600;
+            break;
+        }
+      }
+
+      const questionBlocks = [...document.querySelectorAll('.question')];
+      const questions = [];
+
+      for (let i = 0; i < questionBlocks.length; i++) {
+        const qBlock = questionBlocks[i];
+        const qType = qBlock.querySelector('.q-type').value;
+        const qText = qBlock.querySelector('.q-text').value.trim();
+        const explanation = qBlock.querySelector('.q-explanation').value.trim();
+
+        // Get question time limit
+        const questionTimeLimit = parseFloat(qBlock.querySelector('.q-time-limit').value) || 0;
+
+        // Get image if uploaded
+        const imagePreview = qBlock.querySelector('.image-preview img');
+        const qImage = imagePreview && imagePreview.src ? imagePreview.src : null;
+
+        let questionData = {
+          type: qType,
+          question: qText,
+          explanation: explanation,
+          image: qImage,
+          timeLimit: questionTimeLimit
+        };
+
+        if (!qText) {
+          showNotification(`Question ${i + 1} is missing the question text`, 'error', 'Incomplete Question');
+          return;
+        }
+
+        switch(qType) {
+          case 'multiple-choice':
+            const mcOpts = qBlock.querySelectorAll('.mc-options .opt');
+            const mcOptions = {};
+            mcOpts.forEach(opt => {
+              const key = opt.getAttribute('data-option');
+              mcOptions[key] = opt.value.trim();
+              if (!mcOptions[key]) {
+                showNotification(`Question ${i + 1} is missing option ${key}`, 'error', 'Incomplete Options');
                 return;
+              }
+            });
+            questionData.options = mcOptions;
+            questionData.correct = qBlock.querySelector('.correct').value;
+            break;
+
+          case 'true-false':
+            questionData.options = { True: 'True', False: 'False' };
+            questionData.correct = qBlock.querySelector('.correct').value;
+            break;
+
+          case 'multiple-answer':
+            const maOpts = qBlock.querySelectorAll('.ma-options .opt');
+            const maOptions = {};
+            maOpts.forEach(opt => {
+              const key = opt.getAttribute('data-option');
+              maOptions[key] = opt.value.trim();
+              if (!maOptions[key]) {
+                showNotification(`Question ${i + 1} is missing option ${key}`, 'error', 'Incomplete Options');
+                return;
+              }
+            });
+            questionData.options = maOptions;
+
+            // Get checked answers
+            const checkedBoxes = qBlock.querySelectorAll('.ma-checkboxes input:checked');
+            questionData.correct = Array.from(checkedBoxes).map(cb => cb.value);
+            if (questionData.correct.length === 0) {
+              showNotification(`Question ${i + 1} must have at least one correct answer`, 'error', 'No Correct Answer');
+              return;
+            }
+            break;
+
+          case 'fill-blank':
+            const fbAnswer = qBlock.querySelector('.fb-answer').value.trim();
+            if (!fbAnswer) {
+              showNotification(`Question ${i + 1} is missing the correct answer`, 'error', 'Missing Answer');
+              return;
+            }
+            questionData.correct = fbAnswer.split('|').map(a => a.trim());
+            break;
+
+          case 'matching':
+            const items = qBlock.querySelector('.match-items').value.trim().split('\n').filter(x => x);
+            const matches = qBlock.querySelector('.match-answers').value.trim().split('\n').filter(x => x);
+
+            if (items.length === 0 || matches.length === 0) {
+              showNotification(`Question ${i + 1} needs both items and matches`, 'error', 'Incomplete Matching');
+              return;
             }
 
-            window.electronAPI.saveQuiz(quizData);
-            alert("✅ Quiz saved locally!");
+            if (items.length !== matches.length) {
+              showNotification(`Question ${i + 1}: number of items must match number of answers`, 'error', 'Matching Mismatch');
+              return;
+            }
+
+            questionData.items = items;
+            questionData.correct = matches;
+            break;
+
+          case 'short-answer':
+            // No validation needed - manual grading
+            questionData.correct = null;
+            break;
+        }
+
+        questions.push(questionData);
+      }
+
+      if (!quizName) {
+        showNotification('Please enter a quiz title', 'error', 'Missing Title');
+        return;
+      }
+
+      if (questions.length === 0) {
+        showNotification('Please add at least one question', 'error', 'No Questions');
+        return;
+      }
+
+      // Get randomization settings
+      const shuffleQuestions = document.getElementById('shuffle-questions').checked;
+      const shuffleOptions = document.getElementById('shuffle-options').checked;
+      const useQuestionPool = document.getElementById('use-question-pool').checked;
+      const poolSize = parseInt(document.getElementById('pool-size').value) || 0;
+
+      // Validate question pool
+      if (useQuestionPool) {
+        if (poolSize <= 0) {
+          showNotification('Please specify how many questions to show per student', 'error', 'Invalid Pool Size');
+          return;
+        }
+        if (poolSize >= questions.length) {
+          showNotification('Pool size must be less than total questions (' + questions.length + ')', 'error', 'Invalid Pool Size');
+          return;
+        }
+      }
+
+      const quizData = {
+        name: quizName,
+        questions,
+        totalTimeLimit: quizTimeLimitSeconds,
+        randomization: {
+          shuffleQuestions: shuffleQuestions,
+          shuffleOptions: shuffleOptions,
+          useQuestionPool: useQuestionPool,
+          poolSize: poolSize
+        }
+      };
+
+      // Save quiz using REST API
+      saveQuizToServer(quizData);
     };
+
+    // Save quiz to server
+    async function saveQuizToServer(quizData) {
+      try {
+        let response;
+        const quizName = quizData.name;
+
+        if (editMode && editQuizId) {
+          // Update existing quiz
+          response = await fetch(`/api/quizzes/${editQuizId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(quizData)
+          });
+        } else {
+          // Create new quiz
+          response = await fetch('/api/quizzes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(quizData)
+          });
+        }
+
+        if (response.ok) {
+          showNotification(`Quiz "${quizName}" ${editMode ? 'updated' : 'saved'} successfully!`, 'success', 'Quiz Saved');
+
+          // Redirect after 1.5 seconds
+          setTimeout(() => {
+            if (editMode) {
+              window.location.href = 'quiz_library.html';
+            } else {
+              // Reset form for new quiz
+              document.getElementById('quiz-name').value = '';
+              questionsContainer.innerHTML = '<div class="empty-state" id="empty-state"><i class="fas fa-clipboard-question"></i><h3>No Questions Yet</h3><p>Click "Add Question" to create your first question</p></div>';
+              questionCount = 0;
+              editMode = false;
+              editQuizId = null;
+            }
+          }, 1500);
+        } else {
+          showNotification('Failed to save quiz. Please try again.', 'error', 'Save Error');
+        }
+      } catch (error) {
+        console.error('Error saving quiz:', error);
+        showNotification('Error saving quiz. Please check your connection.', 'error', 'Network Error');
+      }
+    }
+
+    // Load quiz data for editing
+    async function loadQuizForEditing(quizId) {
+      console.log('Loading quiz for editing:', quizId);
+      try {
+        const response = await fetch(`/api/quizzes/${quizId}`);
+        if (!response.ok) {
+          showNotification('Failed to load quiz for editing', 'error', 'Load Error');
+          return;
+        }
+
+        const quiz = await response.json();
+
+        // Populate quiz name
+        document.getElementById('quiz-name').value = quiz.name;
+
+        // Populate time limit
+        if (quiz.totalTimeLimit && quiz.totalTimeLimit > 0) {
+          document.getElementById('quiz-time-limit').value = quiz.totalTimeLimit;
+          document.getElementById('quiz-time-unit').value = 'seconds';
+        } else {
+          document.getElementById('quiz-time-limit').value = 0;
+        }
+
+        // Populate randomization settings
+        if (quiz.randomization) {
+          document.getElementById('shuffle-questions').checked = quiz.randomization.shuffleQuestions || false;
+          document.getElementById('shuffle-options').checked = quiz.randomization.shuffleOptions || false;
+          document.getElementById('use-question-pool').checked = quiz.randomization.useQuestionPool || false;
+          if (quiz.randomization.useQuestionPool) {
+            document.getElementById('question-pool-settings').style.display = 'block';
+            document.getElementById('pool-size').value = quiz.randomization.poolSize || '';
+          }
+        }
+
+        // Load questions
+        if (quiz.questions && quiz.questions.length > 0) {
+          for (const q of quiz.questions) {
+            await loadQuestion(q);
+          }
+        }
+
+        showNotification('Quiz loaded for editing', 'success', 'Edit Mode');
+      } catch (error) {
+        console.error('Error loading quiz:', error);
+        showNotification('Error loading quiz for editing', 'error', 'Load Error');
+      }
+    }
+
+    // Load a single question into the form
+    async function loadQuestion(questionData) {
+      return new Promise((resolve) => {
+        questionCount++;
+
+        if (emptyState) {
+          emptyState.style.display = 'none';
+        }
+
+        const qDiv = document.createElement('div');
+        qDiv.className = 'question';
+        qDiv.dataset.questionId = questionCount;
+
+        // First create the question block with the correct type
+        const qType = questionData.type || 'multiple-choice';
+
+        qDiv.innerHTML = getQuestionHTML(questionCount, qType);
+        questionsContainer.appendChild(qDiv);
+
+        // Wait a bit for the DOM to update
+        setTimeout(() => {
+          const qBlock = qDiv;
+
+          // Set question text
+          qBlock.querySelector('.q-text').value = questionData.question;
+
+          // Set explanation
+          if (questionData.explanation) {
+            qBlock.querySelector('.q-explanation').value = questionData.explanation;
+          }
+
+          // Set time limit
+          if (questionData.timeLimit) {
+            qBlock.querySelector('.q-time-limit').value = questionData.timeLimit;
+          }
+
+          // Set type-specific data
+          switch (qType) {
+            case 'multiple-choice':
+            case 'true-false':
+              if (questionData.options) {
+                Object.keys(questionData.options).forEach((key, idx) => {
+                  const input = qBlock.querySelector(`.mc-option-${key.toLowerCase()}`);
+                  if (input) input.value = questionData.options[key];
+                });
+              }
+              if (questionData.correct) {
+                const radio = qBlock.querySelector(`input[type="radio"][value="${questionData.correct}"]`);
+                if (radio) radio.checked = true;
+              }
+              break;
+
+            case 'multiple-answer':
+              if (questionData.options) {
+                Object.keys(questionData.options).forEach((key, idx) => {
+                  const input = qBlock.querySelector(`.ma-option-${key.toLowerCase()}`);
+                  if (input) input.value = questionData.options[key];
+                });
+              }
+              if (questionData.correct && Array.isArray(questionData.correct)) {
+                questionData.correct.forEach(key => {
+                  const checkbox = qBlock.querySelector(`input[type="checkbox"][value="${key}"]`);
+                  if (checkbox) checkbox.checked = true;
+                });
+              }
+              break;
+
+            case 'fill-blank':
+              if (questionData.correct && Array.isArray(questionData.correct)) {
+                qBlock.querySelector('.fb-answer').value = questionData.correct.join(' | ');
+              }
+              break;
+
+            case 'matching':
+              if (questionData.items) {
+                qBlock.querySelector('.match-items').value = questionData.items.join('\n');
+              }
+              if (questionData.correct) {
+                qBlock.querySelector('.match-answers').value = questionData.correct.join('\n');
+              }
+              break;
+          }
+
+          resolve();
+        }, 50);
+      });
+    }
+
+    // Helper function to get question HTML based on type
+    function getQuestionHTML(qNum, qType) {
+      // This should match the structure created by addQuestion
+      // For simplicity, I'll use a basic structure here
+      const typeOptions = {
+        'multiple-choice': 'Multiple Choice',
+        'true-false': 'True/False',
+        'multiple-answer': 'Multiple Answer',
+        'fill-blank': 'Fill in the Blank',
+        'matching': 'Matching',
+        'short-answer': 'Short Answer'
+      };
+
+      let optionsHTML = '';
+
+      switch (qType) {
+        case 'multiple-choice':
+          optionsHTML = `
+            <div class="mc-options">
+              <label><strong>Options:</strong></label>
+              <div class="option-group">
+                <input type="radio" name="correct-${qNum}" value="A">
+                <span>A:</span>
+                <input type="text" class="option-input mc-option-a" placeholder="Option A">
+              </div>
+              <div class="option-group">
+                <input type="radio" name="correct-${qNum}" value="B">
+                <span>B:</span>
+                <input type="text" class="option-input mc-option-b" placeholder="Option B">
+              </div>
+              <div class="option-group">
+                <input type="radio" name="correct-${qNum}" value="C">
+                <span>C:</span>
+                <input type="text" class="option-input mc-option-c" placeholder="Option C">
+              </div>
+              <div class="option-group">
+                <input type="radio" name="correct-${qNum}" value="D">
+                <span>D:</span>
+                <input type="text" class="option-input mc-option-d" placeholder="Option D">
+              </div>
+            </div>`;
+          break;
+
+        case 'true-false':
+          optionsHTML = `
+            <div class="tf-options">
+              <label><strong>Select Correct Answer:</strong></label>
+              <div class="option-group">
+                <input type="radio" name="correct-${qNum}" value="A" checked>
+                <span>True</span>
+              </div>
+              <div class="option-group">
+                <input type="radio" name="correct-${qNum}" value="B">
+                <span>False</span>
+              </div>
+            </div>`;
+          break;
+
+        case 'multiple-answer':
+          optionsHTML = `
+            <div class="ma-options">
+              <label><strong>Options (select all correct answers):</strong></label>
+              <div class="ma-checkboxes">
+                <div class="option-group">
+                  <input type="checkbox" value="A">
+                  <span>A:</span>
+                  <input type="text" class="ma-option-input ma-option-a" placeholder="Option A">
+                </div>
+                <div class="option-group">
+                  <input type="checkbox" value="B">
+                  <span>B:</span>
+                  <input type="text" class="ma-option-input ma-option-b" placeholder="Option B">
+                </div>
+                <div class="option-group">
+                  <input type="checkbox" value="C">
+                  <span>C:</span>
+                  <input type="text" class="ma-option-input ma-option-c" placeholder="Option C">
+                </div>
+                <div class="option-group">
+                  <input type="checkbox" value="D">
+                  <span>D:</span>
+                  <input type="text" class="ma-option-input ma-option-d" placeholder="Option D">
+                </div>
+              </div>
+            </div>`;
+          break;
+
+        case 'fill-blank':
+          optionsHTML = `
+            <div class="fb-answer-group">
+              <label><strong>Correct Answer(s):</strong></label>
+              <input type="text" class="fb-answer" placeholder="Use | to separate multiple acceptable answers (e.g., Paris | paris)">
+              <p style="font-size: 0.875rem; color: var(--gray-600); margin-top: 0.5rem;">
+                Students will need to type the exact answer (case-sensitive)
+              </p>
+            </div>`;
+          break;
+
+        case 'matching':
+          optionsHTML = `
+            <div class="matching-group">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                  <label><strong>Items:</strong></label>
+                  <textarea class="match-items" placeholder="Enter items (one per line)" rows="5"></textarea>
+                </div>
+                <div>
+                  <label><strong>Matches:</strong></label>
+                  <textarea class="match-answers" placeholder="Enter matches (one per line, in order)" rows="5"></textarea>
+                </div>
+              </div>
+            </div>`;
+          break;
+
+        case 'short-answer':
+          optionsHTML = `
+            <div class="sa-info">
+              <p style="color: var(--gray-600); font-style: italic;">
+                <i class="fas fa-info-circle"></i> This question will require manual grading
+              </p>
+            </div>`;
+          break;
+      }
+
+      return `
+        <div class="question-header">
+          <span class="question-number">
+            <i class="fas fa-question-circle"></i>
+            Question ${qNum}
+          </span>
+          <button class="delete-btn" onclick="deleteQuestion(${qNum})">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
+
+        <label>
+          <i class="fas fa-list"></i>
+          Question Type
+        </label>
+        <select class="q-type question-type-selector" onchange="updateQuestionFields(${qNum})">
+          <option value="multiple-choice" ${qType === 'multiple-choice' ? 'selected' : ''}>Multiple Choice</option>
+          <option value="true-false" ${qType === 'true-false' ? 'selected' : ''}>True/False</option>
+          <option value="multiple-answer" ${qType === 'multiple-answer' ? 'selected' : ''}>Multiple Answer</option>
+          <option value="fill-blank" ${qType === 'fill-blank' ? 'selected' : ''}>Fill in the Blank</option>
+          <option value="matching" ${qType === 'matching' ? 'selected' : ''}>Matching</option>
+          <option value="short-answer" ${qType === 'short-answer' ? 'selected' : ''}>Short Answer</option>
+        </select>
+
+        <label>
+          <i class="fas fa-question"></i>
+          Question Text
+        </label>
+        <textarea class="q-text question-input" placeholder="Enter your question here..." rows="3"></textarea>
+
+        <div class="question-options">
+          ${optionsHTML}
+        </div>
+
+        <label>
+          <i class="fas fa-lightbulb"></i>
+          Explanation (Optional)
+        </label>
+        <textarea class="q-explanation explanation-input" placeholder="Explain the correct answer..." rows="2"></textarea>
+
+        <label>
+          <i class="fas fa-clock"></i>
+          Time Limit for This Question (Optional, in seconds)
+        </label>
+        <input type="number" class="q-time-limit question-time-limit" placeholder="e.g., 30" min="0">
+      `;
+    }
+
+    // Add animation for question disappear
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes questionDisappear {
+        to {
+          opacity: 0;
+          transform: scale(0.9) translateX(-20px);
+        }
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 </body>
 </html>

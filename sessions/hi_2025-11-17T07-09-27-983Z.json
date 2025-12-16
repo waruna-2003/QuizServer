@@ -1,0 +1,45 @@
+{
+  "name": "hi",
+  "questions": [
+    {
+      "type": "multiple-choice",
+      "question": "hi",
+      "explanation": "",
+      "image": null,
+      "options": {
+        "A": "hi",
+        "B": "hi 1",
+        "C": "hi 2",
+        "D": "hi 3"
+      },
+      "correct": "A"
+    }
+  ],
+  "date": "2025-11-17T07:06:52.593Z",
+  "results": [
+    {
+      "participantId": "8fad60cf-4fd3-45dd-ae7c-f39b4d6c7bd2",
+      "participantName": "Waruna",
+      "score": 1,
+      "totalQuestions": 1,
+      "totalGradeable": 1,
+      "pendingManualGrading": 0,
+      "submittedAt": "2025-11-17T07:09:37.577Z",
+      "answers": [
+        "A"
+      ],
+      "detailedResults": [
+        {
+          "questionIndex": 0,
+          "questionType": "multiple-choice",
+          "studentAnswer": "A",
+          "isCorrect": true,
+          "needsManualGrading": false,
+          "manualScore": 1
+        }
+      ]
+    }
+  ],
+  "sessionId": "hi_2025-11-17T07-09-27-983Z",
+  "sessionDate": "2025-11-17T07:09:27.983Z"
+}

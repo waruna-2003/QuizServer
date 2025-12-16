@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Library - QuizServer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #8b5cf6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-600: #4b5563;
+      --gray-900: #111827;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 15s ease infinite;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.3), transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(99, 102, 241, 0.2), transparent 50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(24px);
+      padding: 2rem;
+      border-radius: 28px;
+      box-shadow: 0 24px 72px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.3);
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.6s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--gray-100);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-btn {
+      background: var(--gray-100);
+      color: var(--gray-600);
+      border: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .back-btn:hover {
+      background: var(--gray-200);
+      transform: translateX(-4px);
+    }
+
+    h1 {
+      color: var(--gray-900);
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.85rem 1.5rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, transparent, rgba(255,255,255,0.25), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
+    }
+
+    .btn:hover::before {
+      transform: translateX(100%);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: white;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .search-filter-section {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 2px solid var(--gray-200);
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-600);
+    }
+
+    select {
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--gray-200);
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      background: white;
+      transition: all 0.3s;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .quiz-card {
+      background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.95), rgba(249, 250, 251, 0.95));
+      backdrop-filter: blur(10px);
+      border: 2px solid var(--gray-200);
+      border-radius: 20px;
+      padding: 1.75rem;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .quiz-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      transform: scaleY(0);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .quiz-card:hover::before {
+      transform: scaleY(1);
+    }
+
+    .quiz-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 12px 32px rgba(99, 102, 241, 0.2);
+      transform: translateY(-6px);
+    }
+
+    .quiz-header {
+      margin-bottom: 1rem;
+    }
+
+    .quiz-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+    }
+
+    .quiz-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-category {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .badge-difficulty-easy {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-difficulty-medium {
+      background: #fed7aa;
+      color: #92400e;
+    }
+
+    .badge-difficulty-hard {
+      background: #fecaca;
+      color: #991b1b;
+    }
+
+    .badge-template {
+      background: #e9d5ff;
+      color: #6b21a8;
+    }
+
+    .badge-archived {
+      background: var(--gray-200);
+      color: var(--gray-600);
+    }
+
+    .quiz-stats {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      color: var(--gray-600);
+    }
+
+    .quiz-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .quiz-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 0.5rem;
+      border: 2px solid var(--gray-200);
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+    }
+
+    .action-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .action-btn-danger:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: var(--gray-50);
+      border-radius: 16px;
+      border: 2px dashed var(--gray-300);
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      color: var(--gray-300);
+      margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+      color: var(--gray-600);
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--gray-100);
+    }
+
+    .modal-header h2 {
+      color: var(--gray-900);
+      font-size: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--gray-200);
+      margin-bottom: 1.5rem;
+    }
+
+    .tab {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--gray-600);
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .tab:hover {
+      color: var(--primary);
+      background: var(--gray-50);
+    }
+
+    .tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-left">
+        <button class="back-btn" onclick="window.location.href='admin_welcome.html'">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <h1><i class="fas fa-book"></i> Quiz Library</h1>
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-secondary" onclick="showQuestionBank()">
+          <i class="fas fa-database"></i> Question Bank
+        </button>
+        <button class="btn btn-success" onclick="window.location.href='create_quiz.html'">
+          <i class="fas fa-plus"></i> Create New Quiz
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('quizzes')">
+        <i class="fas fa-list"></i> All Quizzes
+      </button>
+      <button class="tab" onclick="switchTab('templates')">
+        <i class="fas fa-layer-group"></i> Templates
+      </button>
+      <button class="tab" onclick="switchTab('archived')">
+        <i class="fas fa-archive"></i> Archived
+      </button>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="search-filter-section">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="search-input" placeholder="Search quizzes..." oninput="filterQuizzes()">
+      </div>
+      <select id="category-filter" onchange="filterQuizzes()">
+        <option value="">All Categories</option>
+        <option value="Math">Math</option>
+        <option value="Science">Science</option>
+        <option value="History">History</option>
+        <option value="English">English</option>
+        <option value="Other">Other</option>
+      </select>
+      <select id="difficulty-filter" onchange="filterQuizzes()">
+        <option value="">All Difficulties</option>
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+      </select>
+      <button class="btn btn-primary" onclick="showImportModal()">
+        <i class="fas fa-file-import"></i> Import CSV
+      </button>
+    </div>
+
+    <!-- Tab Contents -->
+    <div id="tab-quizzes" class="tab-content active">
+      <div id="quizzes-grid" class="quiz-grid"></div>
+    </div>
+
+    <div id="tab-templates" class="tab-content">
+      <div id="templates-grid" class="quiz-grid"></div>
+    </div>
+
+    <div id="tab-archived" class="tab-content">
+      <div id="archived-grid" class="quiz-grid"></div>
+    </div>
+  </div>
+
+  <!-- Question Bank Modal -->
+  <div id="question-bank-modal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+      <div class="modal-header">
+        <h2><i class="fas fa-database"></i> Question Bank</h2>
+      </div>
+      <div id="question-bank-content"></div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" style="flex: 1;" onclick="closeQuestionBank()">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import CSV Modal -->
+  <div id="import-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-file-import"></i> Import Questions from CSV</h2>
+      </div>
+      <div class="form-group">
+        <label>Upload CSV File</label>
+        <input type="file" id="csv-file" accept=".csv">
+        <p style="font-size: 0.85rem; color: var(--gray-600); margin-top: 0.5rem;">
+          Format: question,type,optionA,optionB,optionC,optionD,correct,explanation
+        </p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" style="flex: 1;" onclick="importCSV()">
+          <i class="fas fa-upload"></i> Import
+        </button>
+        <button class="btn" style="flex: 1; background: var(--gray-200);" onclick="closeImportModal()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="quiz_library.js"></script>
+</body>
+</html>
